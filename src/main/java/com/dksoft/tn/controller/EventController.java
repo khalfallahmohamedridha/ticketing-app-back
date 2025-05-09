@@ -1,6 +1,7 @@
+// Updated EventController.java
 package com.dksoft.tn.controller;
 
-import com.dksoft.tn.dto.EventDto;
+import com.dksoft.tn.dto.*;
 import com.dksoft.tn.entity.Category;
 import com.dksoft.tn.entity.Event;
 import com.dksoft.tn.exception.CategoryNotFoundException;
@@ -12,14 +13,12 @@ import com.dksoft.tn.service.ImageService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-/*import org.springframework.security.access.prepost.PreAuthorize;*/
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
 
-//@CrossOrigin(origins = "http://localhost:4200")//
 @RestController
 @RequestMapping("/events")
 public class EventController {
@@ -35,12 +34,12 @@ public class EventController {
         this.eventMapper = eventMapper;
         this.categoryRepository = categoryRepository;
     }
-    /*@PreAuthorize("hasRole('ADMIN')")*/
+
     @PostMapping("/save")
     public EventDto save(@RequestBody EventDto eventDto) {
         return eventService.save(eventDto);
     }
-    /*@PreAuthorize("hasRole('ADMIN')")*/
+
     @PostMapping("/create-with-image")
     public ResponseEntity<String> createWithImage(
             @RequestPart("event") EventDto eventDto,
@@ -67,17 +66,18 @@ public class EventController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur événement : " + e.getMessage());
         }
     }
-    /*@PreAuthorize("hasRole('ADMIN')")*/
+
     @PutMapping("/update/{id}")
     public EventDto update(@PathVariable Long id, @RequestBody EventDto eventDto) throws EventNotFound {
         return eventService.update(String.valueOf(id), eventDto);
     }
-    /*@PreAuthorize("hasRole('ADMIN')")*/
+
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id) throws EventNotFound {
         eventService.deleteById(String.valueOf(id));
         return ResponseEntity.ok("Event deleted successfully");
     }
+
     @GetMapping("/all")
     public List<EventDto> getAllEvent() {
         return eventService.getAllEventDtos();
@@ -87,7 +87,7 @@ public class EventController {
     public EventDto get(@PathVariable Long id) throws EventNotFound {
         return eventService.getEventById(String.valueOf(id));
     }
-    /*@PreAuthorize("hasRole('ADMIN')")*/
+
     @PostMapping("/{id}/upload-image")
     public ResponseEntity<String> uploadImage(
             @PathVariable Long id,
@@ -107,5 +107,52 @@ public class EventController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Événement non trouvé : " + e.getMessage());
         }
+    }
+
+    // New endpoints for managing dates, locations, and seats
+
+    @PostMapping("/{eventId}/dates")
+    public ResponseEntity<EventDateDto> addDateToEvent(
+            @PathVariable Long eventId,
+            @RequestBody EventDateDto dateDto) throws EventNotFound {
+        EventDateDto savedDate = eventService.addDateToEvent(eventId, dateDto);
+        return ResponseEntity.ok(savedDate);
+    }
+
+    @GetMapping("/{eventId}/dates")
+    public ResponseEntity<List<EventDateDto>> getEventDates(
+            @PathVariable Long eventId) throws EventNotFound {
+        List<EventDateDto> dates = eventService.getEventDates(eventId);
+        return ResponseEntity.ok(dates);
+    }
+
+    @PostMapping("/dates/{dateId}/locations")
+    public ResponseEntity<EventLocationDto> addLocationToDate(
+            @PathVariable Long dateId,
+            @RequestBody EventLocationDto locationDto) {
+        EventLocationDto savedLocation = eventService.addLocationToDate(dateId, locationDto);
+        return ResponseEntity.ok(savedLocation);
+    }
+
+    @GetMapping("/dates/{dateId}/locations")
+    public ResponseEntity<List<EventLocationDto>> getDateLocations(
+            @PathVariable Long dateId) {
+        List<EventLocationDto> locations = eventService.getDateLocations(dateId);
+        return ResponseEntity.ok(locations);
+    }
+
+    @PostMapping("/locations/{locationId}/seats")
+    public ResponseEntity<EventSeatDto> addSeatToLocation(
+            @PathVariable Long locationId,
+            @RequestBody EventSeatDto seatDto) {
+        EventSeatDto savedSeat = eventService.addSeatToLocation(locationId, seatDto);
+        return ResponseEntity.ok(savedSeat);
+    }
+
+    @GetMapping("/locations/{locationId}/seats")
+    public ResponseEntity<List<EventSeatDto>> getLocationSeats(
+            @PathVariable Long locationId) {
+        List<EventSeatDto> seats = eventService.getLocationSeats(locationId);
+        return ResponseEntity.ok(seats);
     }
 }

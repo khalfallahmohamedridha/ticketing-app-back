@@ -3,6 +3,7 @@ package com.dksoft.tn.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -12,13 +13,12 @@ import java.util.List;
 @Data
 @Table(name = "events")
 public class Event {
-
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private long id;
 
         @Column(name = "image_url")
-        private String imageUrl; // 🔹 Champ ajouté pour stocker le chemin/URL de la photo
+        private String imageUrl;
 
         @Column(nullable = false)
         private String title;
@@ -27,24 +27,26 @@ public class Event {
         private String description;
 
         @Column(nullable = false)
-        private String date;
-
-        @Column(nullable = false)
-        private String hour;
-
-        @Column(nullable = false)
-        private String place;
-
-        @Column(nullable = false)
-        private long price;
-
-        @Column(nullable = false)
         private String type;
 
         @ManyToOne
         private Category category;
 
         @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+        private List<EventDate> dates = new ArrayList<>();
+
+        @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
         private List<Ticket> tickets;
 
+        // Helper method to add a date
+        public void addDate(EventDate date) {
+                dates.add(date);
+                date.setEvent(this);
+        }
+
+        // Helper method to remove a date
+        public void removeDate(EventDate date) {
+                dates.remove(date);
+                date.setEvent(null);
+        }
 }
