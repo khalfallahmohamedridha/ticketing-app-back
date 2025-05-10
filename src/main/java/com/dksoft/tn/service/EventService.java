@@ -1,5 +1,18 @@
 package com.dksoft.tn.service;
 
+import com.dksoft.tn.dto.*;
+import com.dksoft.tn.entity.*;
+import com.dksoft.tn.exception.*;
+import com.dksoft.tn.mapper.*;
+import com.dksoft.tn.repository.*;
+import jakarta.validation.ValidationException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 import com.dksoft.tn.dto.EventDateDto;
 import com.dksoft.tn.dto.EventDto;
 import com.dksoft.tn.dto.EventLocationDto;
@@ -22,13 +35,6 @@ import com.dksoft.tn.repository.EventDateRepository;
 import com.dksoft.tn.repository.EventLocationRepository;
 import com.dksoft.tn.repository.EventRepository;
 import com.dksoft.tn.repository.EventSeatRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -69,6 +75,8 @@ public class EventService {
     public EventDto save(EventDto eventDto) {
         Category category = categoryRepository.findById(eventDto.categoryId())
                 .orElseThrow(() -> new CategoryNotFoundException("Category with id = '" + eventDto.categoryId() + "' not found."));
+        validateEventDates(eventDto);
+
         Event event = mapper.fromEventDTO(eventDto);
         event.setCategory(category);
         Event eventSaved = eventRepository.save(event);
@@ -204,5 +212,61 @@ public class EventService {
         return eventSeatRepository.findByEventLocationId(locationId).stream()
                 .map(seatMapper::fromEventSeat)
                 .collect(Collectors.toList());
+    }
+
+    //validation methods
+    private void validateEventDates(EventDto eventDto) {
+        if (eventDto.dates() == null || eventDto.dates().isEmpty()) {
+            return; // No dates to validate
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate today = LocalDate.now();
+
+        for (EventDateDto dateDto : eventDto.dates()) {
+            // Skip if date is null (will be caught by @NotBlank)
+            if (dateDto.date() == null || dateDto.date().isEmpty()) {
+                continue;
+            }
+
+            try {
+                LocalDate eventDate = LocalDate.parse(dateDto.date(), formatter);
+                if (eventDate.isBefore(today)) {
+                    throw new ValidationException("Event date cannot be in the past: " + dateDto.date());
+                }
+            } catch (Exception e) {
+                throw new ValidationException("Invalid date format: " + dateDto.date());
+            }
+
+            // Validate locations
+            validateEventLocations(dateDto);
+        }
+    }
+
+    private void validateEventLocations(EventDateDto dateDto) {
+        if (dateDto.locations() == null || dateDto.locations().isEmpty()) {
+            return; // No locations to validate
+        }
+
+        for (EventLocationDto locationDto : dateDto.locations()) {
+            // Validate seats
+            validateEventSeats(locationDto);
+        }
+    }
+
+    private void validateEventSeats(EventLocationDto locationDto) {
+        if (locationDto.seats() == null || locationDto.seats().isEmpty()) {
+            return; // No seats to validate
+        }
+
+        for (EventSeatDto seatDto : locationDto.seats()) {
+            if (seatDto.price() < 0) {
+                throw new ValidationException("Seat price cannot be negative: " + seatDto.price());
+            }
+
+            if (seatDto.quantity() < 1) {
+                throw new ValidationException("Seat quantity must be at least 1: " + seatDto.quantity());
+            }
+        }
     }
 }

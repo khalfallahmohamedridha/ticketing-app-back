@@ -11,13 +11,18 @@ import com.dksoft.tn.repository.CategoryRepository;
 import com.dksoft.tn.service.EventService;
 import com.dksoft.tn.service.ImageService;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/events")
@@ -36,7 +41,7 @@ public class EventController {
     }
 
     @PostMapping("/save")
-    public EventDto save(@RequestBody EventDto eventDto) {
+    public EventDto save(@Valid @RequestBody EventDto eventDto) {
         return eventService.save(eventDto);
     }
 
@@ -68,7 +73,7 @@ public class EventController {
     }
 
     @PutMapping("/update/{id}")
-    public EventDto update(@PathVariable Long id, @RequestBody EventDto eventDto) throws EventNotFound {
+    public EventDto update(@PathVariable Long id, @Valid @RequestBody EventDto eventDto) throws EventNotFound {
         return eventService.update(String.valueOf(id), eventDto);
     }
 
@@ -109,12 +114,12 @@ public class EventController {
         }
     }
 
-    // New endpoints for managing dates, locations, and seats
+    // endpoints for managing dates, locations, and seats
 
     @PostMapping("/{eventId}/dates")
     public ResponseEntity<EventDateDto> addDateToEvent(
             @PathVariable Long eventId,
-            @RequestBody EventDateDto dateDto) throws EventNotFound {
+            @Valid @RequestBody EventDateDto dateDto) throws EventNotFound {
         EventDateDto savedDate = eventService.addDateToEvent(eventId, dateDto);
         return ResponseEntity.ok(savedDate);
     }
@@ -129,7 +134,7 @@ public class EventController {
     @PostMapping("/dates/{dateId}/locations")
     public ResponseEntity<EventLocationDto> addLocationToDate(
             @PathVariable Long dateId,
-            @RequestBody EventLocationDto locationDto) {
+            @Valid @RequestBody EventLocationDto locationDto) {
         EventLocationDto savedLocation = eventService.addLocationToDate(dateId, locationDto);
         return ResponseEntity.ok(savedLocation);
     }
@@ -144,7 +149,7 @@ public class EventController {
     @PostMapping("/locations/{locationId}/seats")
     public ResponseEntity<EventSeatDto> addSeatToLocation(
             @PathVariable Long locationId,
-            @RequestBody EventSeatDto seatDto) {
+            @Valid @RequestBody EventSeatDto seatDto) {
         EventSeatDto savedSeat = eventService.addSeatToLocation(locationId, seatDto);
         return ResponseEntity.ok(savedSeat);
     }
@@ -154,5 +159,16 @@ public class EventController {
             @PathVariable Long locationId) {
         List<EventSeatDto> seats = eventService.getLocationSeats(locationId);
         return ResponseEntity.ok(seats);
+    }
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
     }
 }
