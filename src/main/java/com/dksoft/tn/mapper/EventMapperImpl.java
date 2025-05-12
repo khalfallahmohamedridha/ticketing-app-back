@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class EventMapperImpl implements EventMapper {
 
-    // 🔁 Mapper DTO vers Entity
+
     @Override
     public Event fromEventDTO(@NonNull EventDto dto) {
         Category category = new Category();
-        category.setId(dto.categoryId()); // Associer uniquement par ID
+        category.setId(dto.categoryId());
 
         return Event.builder()
                 .id(dto.id())
@@ -42,7 +42,8 @@ public class EventMapperImpl implements EventMapper {
                 event.getPlace(),
                 event.getPrice(),
                 event.getType(),
-                event.getCategory() != null ? event.getCategory().getId() : null
+                event.getCategory() != null ? event.getCategory().getId() : null,
+                event.getTickets()
         );
     }
 }

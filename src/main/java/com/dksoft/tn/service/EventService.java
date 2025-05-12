@@ -80,13 +80,13 @@ public class EventService {
                 .toList();
     }
 
-    // 🔥 Récupère une entité Event (pour modifier les champs comme image)
+
     public Event getEventByIdEntity(long id) throws EventNotFound {
         return eventRepository.findById(String.valueOf(id))
                 .orElseThrow(() -> new EventNotFound("Event not found with ID: " + id));
     }
 
-    // 🔥 Sauvegarde d'une entité Event modifiée (ex: image)
+
     public Event saveEntity(Event event) {
         return eventRepository.save(event);
     }

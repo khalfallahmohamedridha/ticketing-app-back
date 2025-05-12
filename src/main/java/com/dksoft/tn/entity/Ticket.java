@@ -1,5 +1,6 @@
 package com.dksoft.tn.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,7 +28,12 @@ public class Ticket {
     @Column(nullable = false)
     private String place;
     @ManyToOne
+    @JsonBackReference
     private Event event;
+
+    @ManyToOne
+    @JsonBackReference
+    private Cart cart;
 
 
 }

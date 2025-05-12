@@ -1,9 +1,10 @@
 package com.dksoft.tn.dto;
 
 public record TicketDto(
-        long id,
+        Long id,
         String numTicket,
         String place,
-        long eventId
+        Long eventId,
+        Long cartId
 ) {
 }

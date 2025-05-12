@@ -1,8 +1,6 @@
 package com.dksoft.tn.mapper;
 
-import com.dksoft.tn.dto.CategoryDto;
 import com.dksoft.tn.dto.TicketDto;
-import com.dksoft.tn.entity.Category;
 import com.dksoft.tn.entity.Ticket;
 import lombok.NonNull;
 

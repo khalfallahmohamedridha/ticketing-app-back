@@ -1,5 +1,7 @@
 package com.dksoft.tn.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -42,9 +44,11 @@ public class Event {
         private String type;
 
         @ManyToOne
+        @JsonBackReference
         private Category category;
 
         @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+        @JsonManagedReference
         private List<Ticket> tickets;
 
 }

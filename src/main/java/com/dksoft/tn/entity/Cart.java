@@ -1,8 +1,14 @@
 package com.dksoft.tn.entity;
 
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -10,22 +16,21 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @Data
-@Table(name = "categories")
-public class Category {
+@Table(name = "cart")
+public class Cart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String name;
 
-    @Column(nullable = false)
-    private String description;
-
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<Event> events;
-
-
+    private List<Ticket> tickets = new ArrayList<>();
 }
+
+
+
+
+
+
