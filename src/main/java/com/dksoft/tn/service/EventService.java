@@ -87,7 +87,8 @@ public class EventService {
     }
 
 
-    public Event saveEntity(Event event) {
-        return eventRepository.save(event);
+    public void saveEntity(Event event) {
+        eventRepository.save(event);
     }
+
 }
