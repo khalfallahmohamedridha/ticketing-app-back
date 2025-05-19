@@ -53,7 +53,7 @@ public class EventService {
         event.setDescription(eventDto.description());
         event.setDate(eventDto.date());
         event.setHour(eventDto.hour());
-        event.setPlace(eventDto.place());
+        event.setLocation(eventDto.location());
         event.setPrice(eventDto.price());
         event.setType(eventDto.type());
     }

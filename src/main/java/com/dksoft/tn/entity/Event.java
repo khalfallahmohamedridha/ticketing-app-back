@@ -1,6 +1,5 @@
 package com.dksoft.tn.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,7 +19,7 @@ public class Event {
         private long id;
 
         @Column(name = "image_url")
-        private String imageUrl; // 🔹 Champ ajouté pour stocker le chemin/URL de la photo
+        private String imageUrl;
 
         @Column(nullable = false)
         private String title;
@@ -35,7 +34,7 @@ public class Event {
         private String hour;
 
         @Column(nullable = false)
-        private String place;
+        private String location;
 
         @Column(nullable = false)
         private long price;
@@ -44,11 +43,10 @@ public class Event {
         private String type;
 
         @ManyToOne
-        @JsonBackReference
         private Category category;
 
         @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-        @JsonManagedReference
+        @JsonManagedReference("event-ticket")
         private List<Ticket> tickets;
 
 }

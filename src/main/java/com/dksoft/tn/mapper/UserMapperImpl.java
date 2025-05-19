@@ -18,6 +18,6 @@ public class UserMapperImpl implements UserMapper {
 
     @Override
     public UserDto fromUser(User user) {
-        return new UserDto(user.getId(), user.getUsername(), user.getName(), user.getEmail(), user.getPassword(), user.getRoles());
+        return new UserDto(user.getId(), user.getName(), user.getUsername(), user.getEmail(), user.getPassword(), user.getRoles());
     }
 }

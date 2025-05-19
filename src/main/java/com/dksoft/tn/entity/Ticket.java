@@ -2,12 +2,7 @@ package com.dksoft.tn.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.util.List;
+import lombok.*;
 
 @Entity
 @AllArgsConstructor
@@ -15,7 +10,6 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Table(name = "tickets")
-
 public class Ticket {
 
     @Id
@@ -27,16 +21,12 @@ public class Ticket {
 
     @Column(nullable = false)
     private String place;
+
     @ManyToOne
-    @JsonBackReference
+    @JsonBackReference("event-ticket")
     private Event event;
 
     @ManyToOne
-    @JsonBackReference
     private Cart cart;
 
-
 }
-
-
-

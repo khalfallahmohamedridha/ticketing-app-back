@@ -1,8 +1,5 @@
 package com.dksoft.tn.dto;
 
-
-import com.dksoft.tn.entity.Ticket;
-
 import java.util.List;
 
 public record EventDto(
@@ -12,9 +9,9 @@ public record EventDto(
         String description,
         String date,
         String hour,
-        String place,
+        String location,
         long price,
         String type,
         Long categoryId,
-        List<Ticket> tickets
+        List<TicketDto> tickets // ✅ Utilisation du TicketDto ici au lieu de Ticket
 ) {}
