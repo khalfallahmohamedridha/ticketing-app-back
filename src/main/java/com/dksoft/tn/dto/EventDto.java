@@ -13,5 +13,5 @@ public record EventDto(
         long price,
         String type,
         Long categoryId,
-        List<TicketDto> tickets // ✅ Utilisation du TicketDto ici au lieu de Ticket
+        List<TicketDto> tickets 
 ) {}
