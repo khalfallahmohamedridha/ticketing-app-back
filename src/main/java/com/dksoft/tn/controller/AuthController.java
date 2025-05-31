@@ -1,8 +1,11 @@
-/*package com.dksoft.tn.controller;
+package com.dksoft.tn.controller;
+import com.dksoft.tn.dto.RefreshTokenRequest;
+import com.dksoft.tn.dto.UserDto;
 import com.dksoft.tn.service.AuthService;
 
 import com.dksoft.tn.dto.AuthResponseDto;
 import com.dksoft.tn.dto.LoginDto;
+import com.dksoft.tn.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,20 +22,28 @@ public class AuthController {
 
     @Autowired
     private AuthService authService;
+    @Autowired
+    UserService userService;
 
     // Build Login REST API
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDto> login(@RequestBody LoginDto loginDto){
 
         //01 - Receive the token from AuthService
-        String token = authService.login(loginDto);
-
-        //02 - Set the token as a response using JwtAuthResponse Dto class
-        AuthResponseDto authResponseDto = new AuthResponseDto();
-        authResponseDto.setAccessToken(token);
+        AuthResponseDto authResponseDto = authService.login(loginDto);
 
         //03 - Return the response to the user
         return new ResponseEntity<>(authResponseDto, HttpStatus.OK);
     }
 
-}*/
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponseDto> refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+        AuthResponseDto authResponseDto = authService.refreshToken(refreshTokenRequest.getRefreshToken());
+        return new ResponseEntity<>(authResponseDto, HttpStatus.OK);
+    }
+
+    @PostMapping("/sign-up")
+    public UserDto save(@RequestBody UserDto userDto) {
+        return userService.save(userDto);
+    }
+}

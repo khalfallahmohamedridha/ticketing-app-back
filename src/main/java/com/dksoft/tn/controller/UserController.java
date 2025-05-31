@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     @Autowired
      UserService userService;
-    @PostMapping("/save")
 
+    @PostMapping("/save")
     public UserDto save( @RequestBody UserDto userDto) {
         return userService.save(userDto);
     }

@@ -1,4 +1,4 @@
-/*package com.dksoft.tn.service;
+package com.dksoft.tn.service;
 
 import com.dksoft.tn.entity.User;
 import com.dksoft.tn.repository.UserRepository;
@@ -21,19 +21,17 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
-        User user = userRepository.findByUsername(username) .orElseThrow(() ->
-                new UsernameNotFoundException("User not exists by Username or Email"));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User does not exist by username: " + username));
 
         Set<GrantedAuthority> authorities = user.getRoles().stream()
-                .map((role) -> new SimpleGrantedAuthority(role.getName()))
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName())) // Prefix with "ROLE_"
                 .collect(Collectors.toSet());
 
         return new org.springframework.security.core.userdetails.User(
-                username,
+                user.getUsername(),
                 user.getPassword(),
                 authorities
         );
     }
-}*/
-
+}

@@ -13,15 +13,16 @@ import com.dksoft.tn.service.ImageService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 /*import org.springframework.security.access.prepost.PreAuthorize;*/
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
 
-//@CrossOrigin(origins = "http://localhost:4200")//
 @RestController
 @RequestMapping("/events")
+@PreAuthorize("hasRole('ADMIN')")
 public class EventController {
 
     private final EventService eventService;
