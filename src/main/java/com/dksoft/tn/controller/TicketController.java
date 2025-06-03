@@ -26,12 +26,14 @@ public class TicketController {
     public TicketDto update(@PathVariable long id, @RequestBody TicketDto ticketDto) throws TicketNotFoundException {
         return ticketService.update(id, ticketDto);
     }
+
     /*@PreAuthorize("hasRole('ADMIN')")*/
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable long id) throws TicketNotFoundException {
         ticketService.deleteById(id);
         return ResponseEntity.ok("Event deleted successfully");
     }
+
     @GetMapping("/all")
     public List<Ticket> getAllTicket() {
         return ticketService.getAllTicket();
