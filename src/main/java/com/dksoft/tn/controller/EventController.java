@@ -36,11 +36,13 @@ public class EventController {
         this.eventMapper = eventMapper;
         this.categoryRepository = categoryRepository;
     }
+
     /*@PreAuthorize("hasRole('ADMIN')")*/
     @PostMapping("/save")
     public EventDto save(@RequestBody EventDto eventDto) {
         return eventService.save(eventDto);
     }
+
     /*@PreAuthorize("hasRole('ADMIN')")*/
     @PostMapping("/create-with-image")
     public ResponseEntity<String> createWithImage(
@@ -68,17 +70,20 @@ public class EventController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur événement : " + e.getMessage());
         }
     }
+
     /*@PreAuthorize("hasRole('ADMIN')")*/
     @PutMapping("/update/{id}")
     public EventDto update(@PathVariable Long id, @RequestBody EventDto eventDto) throws EventNotFound {
         return eventService.update(String.valueOf(id), eventDto);
     }
+
     /*@PreAuthorize("hasRole('ADMIN')")*/
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id) throws EventNotFound {
         eventService.deleteById(String.valueOf(id));
         return ResponseEntity.ok("Event deleted successfully");
     }
+
     @GetMapping("/all")
     public List<EventDto> getAllEvent() {
         return eventService.getAllEventDtos();
@@ -88,6 +93,7 @@ public class EventController {
     public EventDto get(@PathVariable Long id) throws EventNotFound {
         return eventService.getEventById(String.valueOf(id));
     }
+
     /*@PreAuthorize("hasRole('ADMIN')")*/
     @PostMapping("/{id}/upload-image")
     public ResponseEntity<String> uploadImage(

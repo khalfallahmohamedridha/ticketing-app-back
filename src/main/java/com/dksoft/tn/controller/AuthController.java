@@ -1,10 +1,7 @@
 package com.dksoft.tn.controller;
-import com.dksoft.tn.dto.RefreshTokenRequest;
-import com.dksoft.tn.dto.UserDto;
+import com.dksoft.tn.dto.*;
 import com.dksoft.tn.service.AuthService;
 
-import com.dksoft.tn.dto.AuthResponseDto;
-import com.dksoft.tn.dto.LoginDto;
 import com.dksoft.tn.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +40,7 @@ public class AuthController {
     }
 
     @PostMapping("/sign-up")
-    public UserDto save(@RequestBody UserDto userDto) {
+    public UserDto save(@RequestBody RegisterUserRequest userDto) {
         return userService.save(userDto);
     }
 }

@@ -1,10 +1,9 @@
 package com.dksoft.tn.dto;
 
-import com.dksoft.tn.entity.Role;
 
 import java.util.Set;
 
-public record UserDto(
+public record RegisterUserRequest(
         Long id ,
         String firstName ,
         String lastName ,
@@ -12,5 +11,5 @@ public record UserDto(
         String email ,
         String password ,
         String phone,
-        Set<Role> roles
+        Set<String> roles
 ) {}
