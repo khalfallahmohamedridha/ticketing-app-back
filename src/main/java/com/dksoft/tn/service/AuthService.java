@@ -4,7 +4,10 @@ import com.dksoft.tn.configuration.JwtTokenProvider;
 import com.dksoft.tn.dto.AuthResponseDto;
 import com.dksoft.tn.dto.LoginDto;
 import com.dksoft.tn.entity.User;
+import com.dksoft.tn.mapper.UserMapper;
 import com.dksoft.tn.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,6 +19,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class AuthService {
 
@@ -23,6 +27,10 @@ public class AuthService {
     private final UserRepository userRepository;
     private final RedisTemplate<String, String> redisTemplate;
     private final JwtTokenProvider jwtTokenProvider;
+
+
+    @Autowired
+    private UserMapper userMapper;
 
     public AuthService(AuthenticationManager authenticationManager,
                        UserRepository userRepository,
@@ -50,10 +58,15 @@ public class AuthService {
         redisTemplate.opsForValue().set("refresh_token:" + username, refreshToken,
                 604800000, TimeUnit.MILLISECONDS); // 7 days
 
+        // Fetch user
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         // Return both tokens
         AuthResponseDto response = new AuthResponseDto();
         response.setAccessToken(accessToken);
         response.setRefreshToken(refreshToken);
+        response.setUser(userMapper.fromUser(user));
         return response;
     }
 
