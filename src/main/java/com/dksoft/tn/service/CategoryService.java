@@ -1,63 +1,54 @@
 package com.dksoft.tn.service;
 
-import com.dksoft.tn.dto.CategoryDto;
 import com.dksoft.tn.entity.Category;
 import com.dksoft.tn.exception.CategoryNotFoundException;
-import com.dksoft.tn.mapper.CategoryMapper;
 import com.dksoft.tn.repository.CategoryRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
-@Slf4j
-@Transactional
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
-    private final CategoryMapper mapper;
 
-    public CategoryService(CategoryRepository categoryRepository, CategoryMapper mapper) {
+    public CategoryService(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
-        this.mapper = mapper;
     }
 
-    public CategoryDto save(CategoryDto categoryDto) {
-        Category category = mapper.fromCategoryDto(categoryDto);
-        Category savedCategory = categoryRepository.save(category);
-        return mapper.fromCategory(savedCategory);
+    public Category createCategory(Category category) {
+        validateCategory(category);
+        return categoryRepository.save(category);
     }
 
-    public CategoryDto update(Long id, CategoryDto categoryDto) throws CategoryNotFoundException {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new CategoryNotFoundException("Category with id = '" + id + "' not found."));
-        updateCategoryFields(category, categoryDto);
-        Category updatedCategory = categoryRepository.save(category);
-        log.info("Category updated successfully");
-        return mapper.fromCategory(updatedCategory);
+    public Optional<Category> getCategoryById(long id) {
+        return categoryRepository.findById(id);
     }
 
-    private void updateCategoryFields(Category category, CategoryDto categoryDto) {
-        category.setName(categoryDto.name());
-        category.setDescription(categoryDto.description());
+    public List<Category> getAllCategories() {
+        return categoryRepository.findAll();
     }
 
-    public void deleteById(Long id) {
+    public Category updateCategory(long id, Category category) {
+        Category existingCategory = categoryRepository.findById(id)
+                .orElseThrow(() -> new CategoryNotFoundException("Category not found with id: " + id));
+        validateCategory(category);
+
+        existingCategory.setName(category.getName());
+        return categoryRepository.save(existingCategory);
+    }
+
+    public void deleteCategory(long id) {
+        if (!categoryRepository.existsById(id)) {
+            throw new CategoryNotFoundException("Category not found with id: " + id);
+        }
         categoryRepository.deleteById(id);
-        log.info("Category deleted successfully");
     }
 
-    public List<CategoryDto> getAllCategories() {
-        return categoryRepository.findAll().stream()
-                .map(mapper::fromCategory)
-                .toList();
-    }
-
-    public CategoryDto getCategoryById(Long id) throws CategoryNotFoundException {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new CategoryNotFoundException("Category with id = '" + id + "' not found."));
-        return mapper.fromCategory(category);
+    private void validateCategory(Category category) {
+        if (category.getName() == null || category.getName().isBlank()) {
+            throw new IllegalArgumentException("Category name cannot be empty");
+        }
     }
 }

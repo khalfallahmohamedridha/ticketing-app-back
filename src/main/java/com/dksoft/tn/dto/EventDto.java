@@ -1,17 +1,21 @@
 package com.dksoft.tn.dto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public record EventDto(
         long id,
-        String imageUrl,
+        List<String> imageUrls,
         String title,
         String description,
-        String date,
-        String hour,
-        String location,
-        long price,
-        String type,
-        Long categoryId,
-        List<TicketDto> tickets 
-) {}
+        String shortDescription,
+        Long placeId,
+        List<Long> categoryIds,
+        Long organizerId,
+        boolean isActive,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt,
+        List<String> tags,
+        List<EventDayDto> eventDays
+) {
+}

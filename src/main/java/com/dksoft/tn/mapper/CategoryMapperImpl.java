@@ -6,20 +6,21 @@ import lombok.NonNull;
 import org.springframework.stereotype.Service;
 
 @Service
-
-
 public class CategoryMapperImpl implements CategoryMapper {
+
     @Override
     public Category fromCategoryDto(@NonNull CategoryDto dto) {
         return Category.builder()
                 .id(dto.id())
                 .name(dto.name())
-                .description(dto.description())
                 .build();
     }
 
     @Override
-    public CategoryDto fromCategory(Category category) {
-        return new CategoryDto(category.getId(), category.getName(), category.getDescription());
+    public CategoryDto fromCategory(@NonNull Category category) {
+        return new CategoryDto(
+                category.getId(),
+                category.getName()
+        );
     }
 }
