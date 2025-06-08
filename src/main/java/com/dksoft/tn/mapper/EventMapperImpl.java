@@ -1,66 +1,82 @@
 package com.dksoft.tn.mapper;
 
 import com.dksoft.tn.dto.EventDto;
-import com.dksoft.tn.entity.Category;
-import com.dksoft.tn.entity.Event;
-import com.dksoft.tn.entity.Ticket;
+import com.dksoft.tn.entity.*;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 import java.util.stream.Collectors;
+import java.util.List;
 
 @Service
 public class EventMapperImpl implements EventMapper {
 
-    private final TicketMapper ticketMapper;
+    private final EventDayMapper eventDayMapper;
 
-    public EventMapperImpl(TicketMapper ticketMapper) {
-        this.ticketMapper = ticketMapper;
+    public EventMapperImpl(EventDayMapper eventDayMapper) {
+        this.eventDayMapper = eventDayMapper;
     }
 
     @Override
     public Event fromEventDTO(@NonNull EventDto dto) {
-        Category category = new Category();
-        category.setId(dto.categoryId());
+        List<Category> categories = dto.categoryIds() != null ? dto.categoryIds().stream()
+                .map(id -> {
+                    Category category = new Category();
+                    category.setId(id);
+                    return category;
+                })
+                .collect(Collectors.toList()) : null;
 
-        List<Ticket> tickets = dto.tickets() != null ? dto.tickets().stream()
-                .map(ticketMapper::fromTicketDto)
+        Place place = new Place();
+        place.setId(dto.placeId());
+
+        User organizer = new User();
+        organizer.setId(dto.organizerId());
+
+        List<EventDay> eventDays = dto.eventDays() != null ? dto.eventDays().stream()
+                .map(eventDayMapper::fromEventDayDto)
                 .collect(Collectors.toList()) : null;
 
         return Event.builder()
                 .id(dto.id())
+                .imageUrls(dto.imageUrls())
                 .title(dto.title())
                 .description(dto.description())
-                .date(dto.date())
-                .hour(dto.hour())
-                .location(dto.location())
-                .price(dto.price())
-                .type(dto.type())
-                .imageUrl(dto.imageUrl())
-                .category(category)
-                .tickets(tickets)
+                .shortDescription(dto.shortDescription())
+                .place(place)
+                .categories(categories)
+                .organizer(organizer)
+                .isActive(dto.isActive())
+                .createdAt(dto.createdAt())
+                .updatedAt(dto.updatedAt())
+                .tags(dto.tags())
+                .eventDays(eventDays)
                 .build();
     }
 
     @Override
     public EventDto fromEvent(Event event) {
-        List<com.dksoft.tn.dto.TicketDto> ticketDtos = event.getTickets() != null ? event.getTickets().stream()
-                .map(ticketMapper::fromTicket)
+        List<com.dksoft.tn.dto.EventDayDto> eventDayDtos = event.getEventDays() != null ? event.getEventDays().stream()
+                .map(eventDayMapper::fromEventDay)
+                .collect(Collectors.toList()) : null;
+
+        List<Long> categoryIds = event.getCategories() != null ? event.getCategories().stream()
+                .map(Category::getId)
                 .collect(Collectors.toList()) : null;
 
         return new EventDto(
                 event.getId(),
-                event.getImageUrl(),
+                event.getImageUrls(),
                 event.getTitle(),
                 event.getDescription(),
-                event.getDate(),
-                event.getHour(),
-                event.getLocation(),
-                event.getPrice(),
-                event.getType(),
-                event.getCategory() != null ? event.getCategory().getId() : null,
-                ticketDtos
+                event.getShortDescription(),
+                event.getPlace() != null ? event.getPlace().getId() : null,
+                categoryIds,
+                event.getOrganizer() != null ? event.getOrganizer().getId() : null,
+                event.isActive(),
+                event.getCreatedAt(),
+                event.getUpdatedAt(),
+                event.getTags(),
+                eventDayDtos
         );
     }
 }

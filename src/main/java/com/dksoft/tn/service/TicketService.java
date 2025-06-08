@@ -30,7 +30,7 @@ public class TicketService {
     }
 
     public TicketDto save(TicketDto ticketDto) {
-        Event event = eventRepository.findById(String.valueOf(ticketDto.eventId()))
+        Event event = eventRepository.findById(ticketDto.eventId())
                 .orElseThrow(() -> new TicketNotFoundException("Event with id = '" + ticketDto.eventId() + "' not found."));
         Ticket ticket = mapper.fromTicketDto(ticketDto);
         ticket.setEvent(event);
@@ -51,7 +51,7 @@ public class TicketService {
         ticket.setNumTicket(ticketDto.numTicket());
         ticket.setPlace(ticketDto.place());
         if (ticketDto.eventId() != null) {
-            Event event = eventRepository.findById(String.valueOf(ticketDto.eventId()))
+            Event event = eventRepository.findById(ticketDto.eventId())
                     .orElseThrow(() -> new TicketNotFoundException("Event with id = '" + ticketDto.eventId() + "' not found."));
             ticket.setEvent(event);
         }

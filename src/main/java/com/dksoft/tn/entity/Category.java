@@ -1,8 +1,11 @@
 package com.dksoft.tn.entity;
 
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
-import lombok.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -15,16 +18,11 @@ public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @Column(nullable = false, unique = true)
     private String name;
 
-    @Column(nullable = false)
-    private String description;
-
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Event> events;
-
-
+    @ManyToMany(mappedBy = "categories")
+    private List<Event> events = new ArrayList<>();
 }
