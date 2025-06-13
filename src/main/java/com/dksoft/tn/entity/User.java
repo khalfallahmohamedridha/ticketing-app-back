@@ -39,6 +39,18 @@ public class User {
     @Column(nullable = true)
     private String phone;
 
+    @Column(nullable = false)
+    private boolean isActive = true;
+
+    @Column(nullable = true)
+    private String organizationName;
+
+    @Column(nullable = true)
+    private String organizationDescription;
+
+    @Column(nullable = false)
+    private boolean isApproved = false;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",

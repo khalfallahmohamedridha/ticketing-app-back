@@ -11,5 +11,5 @@ public interface UserMapper {
 
     User fromUserDTO(@NonNull UserDto dto);
 
-    UserDto fromUser(User user);
+    UserDto fromUser(@NonNull User user);
 }
