@@ -6,5 +6,7 @@ import lombok.NonNull;
 
 public interface EventMapper {
     Event fromEventDTO(@NonNull EventDto dto);
+
+    // 🔁 Mapper Entity vers DTO
     EventDto fromEvent(Event event);
 }

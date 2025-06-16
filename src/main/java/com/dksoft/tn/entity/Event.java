@@ -1,11 +1,14 @@
 package com.dksoft.tn.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,10 +25,10 @@ public class Event {
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private long id;
 
-        @ElementCollection
-        @CollectionTable(name = "event_images", joinColumns = @JoinColumn(name = "event_id"))
-        @Column(name = "image_url")
-        private List<String> imageUrls = new ArrayList<>();
+//        @ElementCollection
+//        @CollectionTable(name = "event_images", joinColumns = @JoinColumn(name = "event_id"))
+//        @Column(name = "image_url")
+//        private List<String> imageUrls = new ArrayList<>();
 
         @Column(nullable = false)
         private String title;
@@ -36,54 +39,55 @@ public class Event {
         @Column(nullable = false, length = 255)
         private String shortDescription;
 
+<<<<<<< Updated upstream
         @Column(nullable = false)
         private boolean isActive = true;
 
         @ManyToOne
         @JoinColumn(name = "place_id", nullable = false)
         private Place place;
+=======
+        @Column(nullable = false, length = 255)
+        private String tag;
+>>>>>>> Stashed changes
 
-        @ManyToMany
-        @JoinTable(
-                name = "event_categories",
-                joinColumns = @JoinColumn(name = "event_id"),
-                inverseJoinColumns = @JoinColumn(name = "category_id")
-        )
-        private List<Category> categories = new ArrayList<>();
+
+
+
+        @ManyToOne
+        private Category category;
 
         @ManyToOne
         @JoinColumn(name = "organizer_id", nullable = false)
         private User organizer;
 
-        @ElementCollection
-        @CollectionTable(name = "event_tags", joinColumns = @JoinColumn(name = "event_id"))
-        @Column(name = "tag")
-        private List<String> tags = new ArrayList<>();
+
+
 
         @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-        @JsonManagedReference("event-eventday")
-        private List<EventDay> eventDays = new ArrayList<>();
+        @JsonManagedReference
+        private List<Ticket> ticket = new ArrayList<>();
+
+        @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+        @JsonManagedReference
+        private List<Place> places = new ArrayList<>();
+
 
         @Column(nullable = false, updatable = false)
         @Temporal(TemporalType.TIMESTAMP)
-        private LocalDateTime createdAt;
+        private LocalDate dateDebut;
 
         @Column(nullable = false)
         @Temporal(TemporalType.TIMESTAMP)
-        private LocalDateTime updatedAt;
+        private LocalDate dateFin;
 
-        @PrePersist
-        protected void onCreate() {
-                createdAt = LocalDateTime.now();
-                updatedAt = LocalDateTime.now();
-        }
 
-        @PreUpdate
-        protected void onUpdate() {
-                updatedAt = LocalDateTime.now();
-        }
 
+
+<<<<<<< Updated upstream
         public void setIsActive(boolean active) {
                 this.isActive = active;
         }
+=======
+>>>>>>> Stashed changes
 }

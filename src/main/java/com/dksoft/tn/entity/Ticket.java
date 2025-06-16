@@ -23,7 +23,6 @@ public class Ticket {
     private String place;
 
     @ManyToOne
-    @JsonBackReference("event-ticket")
     private Event event;
 
     @ManyToOne

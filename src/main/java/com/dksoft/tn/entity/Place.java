@@ -23,17 +23,14 @@ public class Place {
     @Column(nullable = false)
     private String address;
 
-    @Column
-    private String mapsLink;
+    @ManyToOne
+    private Event event;
 
-    @ElementCollection
-    @CollectionTable(name = "place_images", joinColumns = @JoinColumn(name = "place_id"))
-    @Column(name = "image_url")
-    private List<String> images = new ArrayList<>();
 
-    @Column(nullable = false)
-    private int maxCapacity;
 
+<<<<<<< Updated upstream
     @OneToMany(mappedBy = "place", cascade = CascadeType.ALL)
     private List<Event> events = new ArrayList<>();
+=======
+>>>>>>> Stashed changes
 }

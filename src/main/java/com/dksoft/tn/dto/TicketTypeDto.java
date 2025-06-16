@@ -7,5 +7,6 @@ public record TicketTypeDto(
         long price,
         String currency,
         boolean isActive
+
 ) {
 }

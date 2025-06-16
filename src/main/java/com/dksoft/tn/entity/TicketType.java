@@ -37,4 +37,7 @@ public class TicketType {
 
     @OneToMany(mappedBy = "ticketType", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EventDayTicketType> eventDayTicketTypes = new ArrayList<>();
+    @ManyToOne
+
+    private  Event event;
 }

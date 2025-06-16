@@ -4,20 +4,14 @@ import com.dksoft.tn.dto.EventDto;
 import com.dksoft.tn.entity.*;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
-import java.util.stream.Collectors;
-import java.util.List;
 
 @Service
 public class EventMapperImpl implements EventMapper {
 
-    private final EventDayMapper eventDayMapper;
-
-    public EventMapperImpl(EventDayMapper eventDayMapper) {
-        this.eventDayMapper = eventDayMapper;
-    }
 
     @Override
     public Event fromEventDTO(@NonNull EventDto dto) {
+<<<<<<< Updated upstream
         List<Category> categories = dto.categoryIds() != null ? dto.categoryIds().stream()
                 .map(id -> {
                     Category category = new Category();
@@ -35,13 +29,19 @@ public class EventMapperImpl implements EventMapper {
         List<EventDay> eventDays = dto.eventDays() != null ? dto.eventDays().stream()
                 .map(eventDayMapper::fromEventDayDto)
                 .collect(Collectors.toList()) : null;
+=======
+        Category category = new Category();
+        category.setId(dto.categoryId());
+        User organiser = new User();
+        organiser.setId(dto.organizerId());
+>>>>>>> Stashed changes
 
         return Event.builder()
                 .id(dto.id())
-                .imageUrls(dto.imageUrls())
                 .title(dto.title())
                 .description(dto.description())
                 .shortDescription(dto.shortDescription())
+<<<<<<< Updated upstream
                 .place(place)
                 .categories(categories)
                 .organizer(organizer)
@@ -50,25 +50,32 @@ public class EventMapperImpl implements EventMapper {
                 .updatedAt(dto.updatedAt())
                 .tags(dto.tags())
                 .eventDays(eventDays)
+=======
+                .dateDebut(dto.dateDebut())
+                .dateFin(dto.dateFin())
+                .tag(dto.tags())
+                .dateFin(dto.dateFin())
+
+
+
+//                .imageUrl(dto.imageUrl())
+
+                .category(category)
+                .organizer(organiser)
+>>>>>>> Stashed changes
                 .build();
     }
 
+    // 🔁 Mapper Entity vers DTO
     @Override
     public EventDto fromEvent(Event event) {
-        List<com.dksoft.tn.dto.EventDayDto> eventDayDtos = event.getEventDays() != null ? event.getEventDays().stream()
-                .map(eventDayMapper::fromEventDay)
-                .collect(Collectors.toList()) : null;
-
-        List<Long> categoryIds = event.getCategories() != null ? event.getCategories().stream()
-                .map(Category::getId)
-                .collect(Collectors.toList()) : null;
-
         return new EventDto(
                 event.getId(),
-                event.getImageUrls(),
+                null,
                 event.getTitle(),
                 event.getDescription(),
                 event.getShortDescription(),
+<<<<<<< Updated upstream
                 event.getPlace() != null ? event.getPlace().getId() : null,
                 categoryIds,
                 event.getOrganizer() != null ? event.getOrganizer().getId() : null,
@@ -77,6 +84,15 @@ public class EventMapperImpl implements EventMapper {
                 event.getUpdatedAt(),
                 event.getTags(),
                 eventDayDtos
+=======
+                event.getCategory() != null ? event.getCategory().getId() : null,
+                event.getOrganizer() != null ? event.getOrganizer().getId() : null,
+                event.getDateDebut(),
+                event.getDateFin(),
+                event.getTag(),
+                event.getTicket(),
+                event.getPlaces()
+>>>>>>> Stashed changes
         );
     }
 }

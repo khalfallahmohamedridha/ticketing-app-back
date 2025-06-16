@@ -1,5 +1,6 @@
 package com.dksoft.tn.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,5 +25,7 @@ public class Category {
     private String name;
 
     @ManyToMany(mappedBy = "categories")
+    @JsonManagedReference
+
     private List<Event> events = new ArrayList<>();
 }

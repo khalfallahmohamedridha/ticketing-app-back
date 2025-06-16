@@ -1,10 +1,20 @@
 package com.dksoft.tn.service;
 
-import com.dksoft.tn.entity.Event;
+import com.dksoft.tn.dto.EventDto;
+import com.dksoft.tn.entity.*;
+import com.dksoft.tn.exception.CategoryNotFoundException;
 import com.dksoft.tn.exception.EventNotFound;
+import com.dksoft.tn.mapper.EventMapper;
+import com.dksoft.tn.repository.CategoryRepository;
 import com.dksoft.tn.repository.EventRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
+<<<<<<< Updated upstream
 import org.springframework.web.multipart.MultipartFile;
+=======
+import org.springframework.transaction.annotation.Transactional;
+>>>>>>> Stashed changes
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,13 +26,22 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Slf4j
+@Transactional
 public class EventService {
 
     private final EventRepository eventRepository;
+<<<<<<< Updated upstream
     private static final String UPLOAD_DIR = "uploads/images/";
+=======
+    private final EventMapper mapper;
+    private final CategoryRepository categoryRepository;
+>>>>>>> Stashed changes
 
-    public EventService(EventRepository eventRepository) {
+    public EventService(EventRepository eventRepository, EventMapper mapper, CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
         this.eventRepository = eventRepository;
+<<<<<<< Updated upstream
         // Ensure upload directory exists
         try {
             Files.createDirectories(Paths.get(UPLOAD_DIR));
@@ -35,16 +54,31 @@ public class EventService {
         validateEvent(event);
         handleImageUploads(event, images);
         return eventRepository.save(event);
+=======
+        this.mapper = mapper;
     }
 
-    public Optional<Event> getEventById(long id) {
-        return eventRepository.findById(id);
+    public EventDto save(EventDto eventDto) {
+        Category category = categoryRepository.findById(eventDto.categoryId())
+                .orElseThrow(() -> new CategoryNotFoundException("Category with id = '" + eventDto.categoryId() + "' not found."));
+        Event event = mapper.fromEventDTO(eventDto);
+        event.setCategory(category);
+        Event eventSaved = eventRepository.save(event);
+        return mapper.fromEvent(eventSaved);
+>>>>>>> Stashed changes
     }
 
-    public List<Event> getAllEvents() {
+
+    public void deleteById(Long id) {
+        eventRepository.deleteById(id);
+        log.info("Event deleted successfully with ID: {}", id);
+    }
+
+    public List<Event> getAllEvent() {
         return eventRepository.findAll();
     }
 
+<<<<<<< Updated upstream
     public Event updateEvent(long id, Event event, MultipartFile[] images) throws EventNotFound, IOException {
         Event existingEvent = eventRepository.findById(id)
                 .orElseThrow(() -> new EventNotFound("Event not found with id: " + id));
@@ -68,15 +102,22 @@ public class EventService {
 
         handleImageUploads(existingEvent, images);
         return eventRepository.save(existingEvent);
+=======
+    public EventDto getEventById(Long id) throws EventNotFound {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new EventNotFound("Event with id = '" + id + "' not found."));
+        return mapper.fromEvent(event);
+>>>>>>> Stashed changes
     }
 
-    public void deleteEvent(long id) throws EventNotFound {
-        if (!eventRepository.existsById(id)) {
-            throw new EventNotFound("Event not found with id: " + id);
-        }
-        eventRepository.deleteById(id);
+    public List<EventDto> getAllEventDtos() {
+        return eventRepository.findAll()
+                .stream()
+                .map(mapper::fromEvent)
+                .toList();
     }
 
+<<<<<<< Updated upstream
     private void handleImageUploads(Event event, MultipartFile[] images) throws IOException {
         if (images != null && images.length > 0) {
             List<String> imageUrls = event.getImageUrls() != null ? event.getImageUrls() : new ArrayList<>();
@@ -126,4 +167,8 @@ public class EventService {
             throw new IllegalArgumentException("At least one event day must have a ticket type");
         }
     }
+=======
+
+
+>>>>>>> Stashed changes
 }
